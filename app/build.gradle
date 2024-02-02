@@ -1,7 +1,10 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlinx.kover'
 }
+
+apply from: '../jacoco.gradle'
 
 android {
     namespace 'com.example.coveragetestapp'
@@ -22,6 +25,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        debug {
+            testCoverageEnabled true
+        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -41,7 +47,47 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.5.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'org.jacoco:org.jacoco.core:0.8.8'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
+
+koverReport {
+
+    filters {
+        excludes {
+            classes(
+                    // Build
+                    "*.BuildConfig",
+                    // Design and Android
+                    "*.components.*",
+                    "*.databinding.*",
+                    "*App\$*",
+                    // App excludes
+                    "*.testutils.*"
+            )
+        }
+    }
+
+    androidReports("debug") {
+        verify {
+            rule {
+                // specify verification bound for this rule
+                bound {
+                    // lower bound
+                    minValue = 98
+
+                    // upper bound
+                    maxValue = 99
+
+                    // specify which units to measure coverage for
+                    metric = kotlinx.kover.gradle.plugin.dsl.MetricType.LINE
+
+                    // specify an aggregating function to obtain a single value that will be checked against the lower and upper boundaries
+                    aggregation = kotlinx.kover.gradle.plugin.dsl.AggregationType.COVERED_PERCENTAGE
+                }
+            }
+        }
+    }
 }
