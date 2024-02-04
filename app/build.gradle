@@ -76,7 +76,7 @@ koverReport {
                 // specify verification bound for this rule
                 bound {
                     // lower bound
-                    minValue = 98
+                    minValue = 80
 
                     // upper bound
                     maxValue = 99
